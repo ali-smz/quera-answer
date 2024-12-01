@@ -1,8 +1,7 @@
 import math
 
 def calculate_min_cost(t, shams):
-    results = []
-    
+    results = []    
     for i in range(t):
         k, j = shams[i][:2]
         kabab, joojeh, mix = shams[i][2:]
@@ -18,7 +17,6 @@ def calculate_min_cost(t, shams):
         
         min_cost = min(cost1, cost2, cost3)
         results.append(min_cost)
-    
     return results
 
 t = int(input())

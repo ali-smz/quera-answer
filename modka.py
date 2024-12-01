@@ -1,38 +1,35 @@
 import heapq
+from collections import defaultdict
 
-def find_minimum_time(n, m, k, flights):
-    INF = float('inf')
-    dp = [[INF] * k for _ in range(n + 1)]
-    dp[1][0] = 0  
-    
-    graph = [[] for _ in range(n + 1)]
-    for u, v, t in flights:
+def solve():
+    n, m, k = map(int, input().split())
+
+    graph = defaultdict(list)
+    for _ in range(m):
+        u, v, t = map(int, input().split())
         graph[u].append((v, t))
 
-    pq = [(0, 1, 0)]  
+    dist = {}
+    dist[(1, 0)] = 0 
+
+    pq = [(0, 1, 0)]
+
     while pq:
-        current_time, current_city, current_mod = heapq.heappop(pq)
-        
-        if current_time > dp[current_city][current_mod]:
+        curr_time, u, r = heapq.heappop(pq)
+
+        if (u, r) in dist and curr_time > dist[(u, r)]:
             continue
-        
-        for neighbor, travel_time in graph[current_city]:
-            next_time = current_time + travel_time
-            next_mod = (current_mod + 1) % k     
-            
-            if next_time < dp[neighbor][next_mod]:
-                dp[neighbor][next_mod] = next_time
-                heapq.heappush(pq, (next_time, neighbor, next_mod))
-    
 
-    result = dp[n][0]
-    return result if result != INF else -1
 
-n, m, k = map(int, input().split())
-flights = []
-for _ in range(m):
-    u, v, t = map(int, input().split())
-    flights.append((u, v, t))
+        for v, t in graph[u]:
+            new_time = curr_time + t
+            new_r = (r + 1) % k 
 
-result = find_minimum_time(n, m, k, flights)
-print(result)
+            if (v, new_r) not in dist or new_time < dist[(v, new_r)]:
+                dist[(v, new_r)] = new_time
+                heapq.heappush(pq, (new_time, v, new_r))
+
+    result = dist.get((n, 0), float('inf'))
+    print(result if result < float('inf') else -1)
+
+solve()
